@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://ca815odk1hm7l"]
+[gd_scene load_steps=6 format=3 uid="uid://ca815odk1hm7l"]
 
+[ext_resource type="Script" path="res://game.gd" id="1_xb43t"]
 [ext_resource type="PackedScene" uid="uid://bqsaylu8ei41c" path="res://platform.tscn" id="2_5xrao"]
 [ext_resource type="PackedScene" uid="uid://bxyio300bpfif" path="res://player.tscn" id="2_kxxhw"]
 [ext_resource type="AudioStream" uid="uid://52u3k62lfxmd" path="res://Assets/dodge_the_creeps_2d_assets/art/mixkit-fairy-arcade-sparkle-866.wav" id="3_h2xkk"]
@@ -7,47 +8,83 @@
 
 [node name="Node2D" type="Node2D"]
 
-[node name="platform" parent="." instance=ExtResource("2_5xrao")]
-position = Vector2(64, 840)
+[node name="game" type="Node2D" parent="." groups=["game"]]
+script = ExtResource("1_xb43t")
 
-[node name="platform2" parent="." instance=ExtResource("2_5xrao")]
-position = Vector2(344, 540)
-
-[node name="platform3" parent="." instance=ExtResource("2_5xrao")]
-position = Vector2(64, 180)
-
-[node name="CharacterBody2D" parent="." groups=["player"] instance=ExtResource("2_kxxhw")]
+[node name="CharacterBody2D" parent="game" groups=["player"] instance=ExtResource("2_kxxhw")]
 position = Vector2(200, 500)
 
-[node name="Camera2D" type="Camera2D" parent="CharacterBody2D"]
+[node name="Camera2D" type="Camera2D" parent="game/CharacterBody2D"]
 limit_left = 0
 limit_right = 600
 
-[node name="gui" type="Control" parent="CharacterBody2D"]
+[node name="gui" type="Control" parent="game/CharacterBody2D"]
 layout_mode = 3
 anchors_preset = 0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = -60.0
 
-[node name="score" type="Control" parent="CharacterBody2D/gui"]
+[node name="score" type="Control" parent="game/CharacterBody2D/gui"]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Label" type="Label" parent="CharacterBody2D/gui/score"]
+[node name="Label" type="Label" parent="game/CharacterBody2D/gui/score"]
 texture_filter = 1
 layout_mode = 0
 offset_right = 105.0
 offset_bottom = 46.0
 theme_override_font_sizes/font_size = 36
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="CharacterBody2D"]
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="game/CharacterBody2D"]
 stream = ExtResource("3_h2xkk")
 
-[node name="walls" type="Node2D" parent="."]
+[node name="walls" type="Node2D" parent="game"]
 
-[node name="left" parent="walls" instance=ExtResource("3_ypuqv")]
+[node name="left" parent="game/walls" instance=ExtResource("3_ypuqv")]
 
-[node name="right" parent="walls" instance=ExtResource("3_ypuqv")]
+[node name="right" parent="game/walls" instance=ExtResource("3_ypuqv")]
 position = Vector2(536, 2.08165e-12)
+
+[node name="platforms" type="Node2D" parent="game"]
+
+[node name="platform" parent="game/platforms" instance=ExtResource("2_5xrao")]
+position = Vector2(64, 840)
+
+[node name="platform2" parent="game/platforms" instance=ExtResource("2_5xrao")]
+position = Vector2(344, 540)
+
+[node name="platform3" parent="game/platforms" instance=ExtResource("2_5xrao")]
+position = Vector2(64, 180)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="gameover" type="Control" parent="CanvasLayer" groups=["gameover"]]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 200.0
+offset_top = 300.0
+offset_right = 240.0
+offset_bottom = 340.0
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/gameover"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/gameover/CenterContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/gameover/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "You Died!
+"
+
+[node name="Button" type="Button" parent="CanvasLayer/gameover/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Play Again?"
+
+[connection signal="pressed" from="CanvasLayer/gameover/CenterContainer/VBoxContainer/Button" to="game" method="_on_button_pressed"]

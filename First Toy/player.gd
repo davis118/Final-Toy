@@ -5,6 +5,7 @@ const SPEED = 15
 const JUMP_VELOCITY = -800.0
 
 @onready var screen_width = get_viewport().get_visible_rect().size.x
+@onready var original = position
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -55,4 +56,7 @@ func increment_score():
 	$"gui/score/Label".text = str(counter)
 	$AudioStreamPlayer2D.play()
 
-	
+func reset():
+	position = original
+	counter = 0
+	$"gui/score/Label".text = ""
